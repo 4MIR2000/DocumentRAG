@@ -22,6 +22,12 @@ client = genai.Client(
 
 MODEL_NAME = "gemini-2.5-flash"
 
+FALLBACK_MESSAGE = (
+    "Der Gemini-Dienst ist aktuell nicht verfügbar. "
+    "Ich konnte daher keine generierte Antwort liefern, "
+    "zeige dir aber weiterhin die passenden Quellen an."
+)
+
 def build_prompt(question: str, retrieved_chunks: list[dict]) -> str:
     print("Building prompt for Gemini with retrieved chunks:")
     print(retrieved_chunks)
@@ -65,12 +71,18 @@ def generate_with_gemini(question: str, retrieved_chunks: list[dict]):
 
     prompt = build_prompt(question, retrieved_chunks)
 
-    response = client.models.generate_content(
-        model=MODEL_NAME,
-        contents=prompt,
-    )
-
-    return response.text.strip()
+    try:
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=prompt,
+        )
+        if not response or not getattr(response, "text", None):
+            return FALLBACK_MESSAGE
+        return response.text.strip()
+    except Exception as exc:
+        # Keep the app responsive when Gemini is rate-limited or temporarily unavailable.
+        print(f"Gemini generation failed: {type(exc).__name__}: {exc}")
+        return FALLBACK_MESSAGE
 
 
 
