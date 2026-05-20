@@ -6,7 +6,8 @@ Eine Streamlit-basierte Web-App mit FastAPI-Backend für PDF-basiertes Chatten.
 
 - Mehrere PDFs gleichzeitig hochladen
 - Chunking pro Seite mit Satzüberlappung
-- Embeddings über TF-IDF + SVD und Vektorsuche mit FAISS
+- Embeddings über gemini-embedding-001 und Vektorsuche mit FAISS
+- LLM: gemini-2.5-flash
 - Chat-Antworten mit Quellenangabe inklusive Dokumentname und Seite
 - 5 hartcodierte Benchmark-Fragen mit erwarteten Antworten und Retrieval-Score im UI
 - Laufbar mit Docker Compose
@@ -57,7 +58,14 @@ Dann:
 
 ## Benchmark
 
-Die Benchmark-Funktion nutzt ein hartcodiertes Demo-Dokument mit fünf Fragen und erwarteten Antworten. Der sichtbare Retrieval-Score ist eine kombinierte Kennzahl aus Keyword-Recall, Antwortüberlappung und lexikalischer Ähnlichkeit zwischen erwarteter Antwort und gefundenem Chunk.
+Die Benchmark‑Funktion nutzt ein Demo‑Dokument (`demo_handbuch.pdf`) mit fünf hartcodierten Fragen und erwarteten Antworten. Zur Evaluation wird die Bibliothek `ragas` verwendet. Dort wird `ragas.evaluate` aufgerufen — explizit mit den Metriken:
+
+- `faithfulness`
+- `answer_relevancy`
+- `context_precision`
+- `context_recall`
+
+Die konkrete Implementierung steht in `backend/rag.py`.
 
 ## Erweiterungen
 
