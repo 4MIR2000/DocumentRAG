@@ -37,7 +37,6 @@ def _upload_documents(conversation_id: str, files) -> dict:
 		timeout=120,
 	)
 	response.raise_for_status()
-	st.write(response.text)
 	return response.json()
 
 
