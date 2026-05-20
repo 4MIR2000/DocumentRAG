@@ -10,4 +10,8 @@ scikit-learn==1.6.1
 numpy==2.2.2
 pandas==2.2.3
 python-dotenv==1.0.0
-markdownify==0.9.2
+pymupdf4llm
+google-genai
+ragas
+datasets
+langchain-google-genai
