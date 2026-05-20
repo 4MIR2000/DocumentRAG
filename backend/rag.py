@@ -46,6 +46,20 @@ _client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 def _embed_text(text: str, task_type: str) -> list[float]:
+    print(f"Embedding text for task '{task_type}' with Gemini...")
+
+    try:
+        result = _client.models.embed_content(
+            model=EMBEDDING_MODEL,
+            contents=text,
+            config={
+                "task_type": task_type,
+            },
+        )
+    except Exception as exc:
+        print(f"Error during embedding for task '{task_type}': {exc}")
+        raise 
+    
     result = _client.models.embed_content(
         model=EMBEDDING_MODEL,
         contents=text,
@@ -53,6 +67,7 @@ def _embed_text(text: str, task_type: str) -> list[float]:
             "task_type": task_type,
         },
     )
+    print(f"Embedding finished for task '{task_type}'")
     return result.embeddings[0].values
 
 
@@ -374,7 +389,9 @@ def build_index(documents: list[UploadedDocument], pages: list[PageRecord]) -> R
 
     chunk_embeddings = []
     for chunk in chunks:
+        print("chunks built")
         embedding = embed_document(chunk.text)
+        print("embedding done")
         chunk_embeddings.append(embedding)
 
     return RAGIndex(

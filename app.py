@@ -6,13 +6,10 @@ import pandas as pd
 import requests
 import streamlit as st
 
-API_URL = "http://localhost:8000"
-#BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
-
 load_dotenv()  # Lädt die .env Datei
 
 
-BACKEND_URL = os.getenv("BACKEND_URL", API_URL)
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 
 def _api(path: str) -> str:

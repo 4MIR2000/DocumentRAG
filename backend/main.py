@@ -6,6 +6,8 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Annotated
 from dotenv import load_dotenv
+import traceback
+from fastapi import HTTPException
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -67,6 +69,7 @@ def _rebuild_store(store: ConversationStore):
     pages = []
     for document in store.documents:
         pages.extend(extract_pages_from_pdf(document))
+        print("Extracted pages from document:", document.file_name)
     store.index = build_index(store.documents, pages)
 
 
@@ -98,10 +101,8 @@ async def upload_documents(
     store = _get_store(conversation_id)
     store.documents.extend(pdf_documents)
 
-    try:
-        _rebuild_store(store)
-    except Exception as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    _rebuild_store(store)
+
 
     return UploadResponse(
         conversation_id=conversation_id,

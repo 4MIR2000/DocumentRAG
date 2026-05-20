@@ -11,16 +11,16 @@ GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 
 import os
 from dotenv import load_dotenv
-import google.generativeai as genai
+#mport google.generativeai as genai
+from google import genai
 
 load_dotenv()
 
-genai.configure(
+client = genai.Client(
     api_key=os.getenv("GEMINI_API_KEY")
 )
 
-model = genai.GenerativeModel("gemini-2.5-flash")
-
+MODEL_NAME = "gemini-2.5-flash"
 
 def build_prompt(question: str, retrieved_chunks: list[dict]) -> str:
     print("Building prompt for Gemini with retrieved chunks:")
@@ -65,7 +65,10 @@ def generate_with_gemini(question: str, retrieved_chunks: list[dict]):
 
     prompt = build_prompt(question, retrieved_chunks)
 
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(
+        model=MODEL_NAME,
+        contents=prompt,
+    )
 
     return response.text.strip()
 

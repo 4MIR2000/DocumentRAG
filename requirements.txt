@@ -15,4 +15,3 @@ google-genai
 ragas
 datasets
 langchain-google-genai
-google-generativeai
